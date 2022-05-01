@@ -19,7 +19,7 @@ def _prettify_card_number(value):
 
 class DebitCard(models.Model):
     card_number = models.CharField(validators=(_card_number_validator,), max_length=_CARD_NUMBER_LENGTH,
-                                   primary_key=True, editable=False)
+                                   primary_key=True)
     account = models.OneToOneField(BankAccount, on_delete=models.CASCADE, related_name='card')
 
     def __str__(self):
