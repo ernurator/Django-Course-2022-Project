@@ -12,9 +12,9 @@ class Deposit(models.Model):
     currency = models.CharField(choices=CurrencyEnum.choices, default=CurrencyEnum.KZT,
                                 max_length=CURRENCY_SYMBOL_LENGTH)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deposits', related_query_name='deposit')
-    balance = models.PositiveBigIntegerField(default=0)
+    balance = models.FloatField(default=0)
     rate = models.FloatField()
     due_date = models.DateField()
 
     def __str__(self):
-        return f'Deposit #{self.iban} of user {self.user}'
+        return f'Deposit #{self.iban} of user {self.user}, {self.rate}% rate [{self.balance} {self.currency}]'

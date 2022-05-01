@@ -11,7 +11,7 @@ class BankAccount(models.Model):
     currency = models.CharField(choices=CurrencyEnum.choices, default=CurrencyEnum.KZT,
                                 max_length=CURRENCY_SYMBOL_LENGTH)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts', related_query_name='account')
-    balance = models.PositiveBigIntegerField(default=0)
+    balance = models.FloatField(default=0)
 
     def __str__(self):
         return f'Account #{self.iban} of user {self.user}'
