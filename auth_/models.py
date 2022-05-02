@@ -14,12 +14,12 @@ def _phone_number_validator(value):
 
 class MerchantManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_metrchant=True)
+        return super().get_queryset().filter(is_merchant=True)
 
 
 class CustomerManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_metrchant=False)
+        return super().get_queryset().filter(is_merchant=False)
 
 
 class User(AbstractUser):
