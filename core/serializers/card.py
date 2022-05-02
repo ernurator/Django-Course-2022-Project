@@ -5,7 +5,6 @@ from .account import BankAccountReadSerializer
 
 
 class DebitCardBaseSerializer(serializers.ModelSerializer):
-    account = BankAccountReadSerializer
 
     class Meta:
         model = DebitCard
@@ -13,11 +12,13 @@ class DebitCardBaseSerializer(serializers.ModelSerializer):
     def validate_account(self, value):
         user = self.context['request'].user
         if value.user != user:
-            raise serializers.ValidationError('Wrong account provided')
+            raise serializers.ValidationError(f'Wrong account provided: {value}')
         return value
 
 
 class DebitCardReadSerializer(DebitCardBaseSerializer):
+    account = BankAccountReadSerializer
+
     class Meta(DebitCardBaseSerializer.Meta):
         fields = '__all__'
         depth = 1
