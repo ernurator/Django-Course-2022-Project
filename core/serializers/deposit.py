@@ -56,8 +56,3 @@ class DepositUpdateAmountSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         raise NotImplemented
-
-
-class DepositUpdateTermsSerializer(DepositBaseSerializer):
-    class Meta(DepositBaseSerializer.Meta):
-        fields = ['due_date', 'rate']
