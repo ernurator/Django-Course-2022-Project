@@ -1,5 +1,4 @@
 import uuid
-import abc
 
 from django.db import models
 
