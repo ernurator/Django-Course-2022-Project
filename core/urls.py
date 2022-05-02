@@ -6,6 +6,7 @@ from .views import (
     BankAccountListCreateAPIView, BankAccountRetrieveUpdateDestroyAPIView,
     DebitCardViewSet,
     DepositViewSet,
+    LoanViewSet
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
 router = SimpleRouter()
 router.register(r'cards', DebitCardViewSet, basename='debit-card')
 router.register(r'deposits', DepositViewSet, basename='deposit')
+router.register(r'loans', LoanViewSet, basename='loan')
 urlpatterns.extend(router.urls)
