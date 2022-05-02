@@ -17,8 +17,3 @@ class BankAccountWriteSerializer(BankAccountBaseSerializer):
     class Meta(BankAccountBaseSerializer.Meta):
         fields = '__all__'
         read_only_fields = ['user']
-
-
-class BankAccountUpdateSerializer(BankAccountBaseSerializer):
-    class Meta(BankAccountBaseSerializer.Meta):
-        fields = ['balance']

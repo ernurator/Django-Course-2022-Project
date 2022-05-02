@@ -1,8 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from core.serializers import BankAccountReadSerializer, BankAccountUpdateSerializer, BankAccountWriteSerializer
-from core.permissions import IsSuperuser
+from core.serializers import BankAccountReadSerializer, BankAccountWriteSerializer
 
 
 class BankAccountBaseAPIView(generics.GenericAPIView):
@@ -26,18 +25,5 @@ class BankAccountListCreateAPIView(BankAccountBaseAPIView, generics.ListCreateAP
             return BankAccountWriteSerializer
 
 
-class BankAccountRetrieveUpdateDestroyAPIView(BankAccountBaseAPIView, generics.RetrieveUpdateDestroyAPIView):
-
-    def get_permissions(self):
-        method = self.request.method
-        if method in ('GET', 'DELETE'):
-            return super().get_permissions()
-        else:
-            return [IsSuperuser()]
-
-    def get_serializer_class(self):
-        method = self.request.method
-        if method == 'GET':
-            return BankAccountReadSerializer
-        else:
-            return BankAccountUpdateSerializer
+class BankAccountRetrieveDestroyAPIView(BankAccountBaseAPIView, generics.RetrieveDestroyAPIView):
+    serializer_class = BankAccountReadSerializer

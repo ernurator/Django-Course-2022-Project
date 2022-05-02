@@ -3,7 +3,7 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from .views import (
-    BankAccountListCreateAPIView, BankAccountRetrieveUpdateDestroyAPIView,
+    BankAccountListCreateAPIView, BankAccountRetrieveDestroyAPIView,
     DebitCardViewSet,
     DepositViewSet,
     LoanViewSet
@@ -11,7 +11,7 @@ from .views import (
 
 urlpatterns = [
     path('accounts/', BankAccountListCreateAPIView.as_view()),
-    path('accounts/<str:iban>/', BankAccountRetrieveUpdateDestroyAPIView.as_view()),
+    path('accounts/<str:iban>/', BankAccountRetrieveDestroyAPIView.as_view()),
 ]
 
 router = SimpleRouter()
