@@ -17,10 +17,17 @@ def _prettify_card_number(value):
     return ' '.join(value[i:i + 4] for i in range(0, _CARD_NUMBER_LENGTH, 4))
 
 
+class DebitCardManager(models.Manager):
+    def user_cards(self, user):
+        return self.filter(account__user=user)
+
+
 class DebitCard(models.Model):
     card_number = models.CharField(validators=(_card_number_validator,), max_length=_CARD_NUMBER_LENGTH,
                                    primary_key=True)
     account = models.OneToOneField(BankAccount, on_delete=models.CASCADE, related_name='card')
+
+    objects = DebitCardManager()
 
     def __str__(self):
         return f'Card {_prettify_card_number(self.card_number)}'

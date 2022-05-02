@@ -13,7 +13,7 @@ class DepositViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Deposit.objects.filter(user=user)
+        return Deposit.objects.user_deposits(user)
 
     def get_serializer_class(self):
         method = self.request.method

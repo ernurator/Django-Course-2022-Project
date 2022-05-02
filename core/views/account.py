@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from core.serializers import BankAccountReadSerializer, BankAccountWriteSerializer
+from core.models import BankAccount
 
 
 class BankAccountBaseAPIView(generics.GenericAPIView):
@@ -9,7 +10,7 @@ class BankAccountBaseAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]  # TODO: remove after enabling IsAuthenticated in global settings
 
     def get_queryset(self):
-        return self.request.user.accounts.all()
+        return BankAccount.objects.user_accounts(self.request.user)
 
 
 class BankAccountListCreateAPIView(BankAccountBaseAPIView, generics.ListCreateAPIView):

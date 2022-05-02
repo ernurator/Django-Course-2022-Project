@@ -10,7 +10,7 @@ class DebitCardViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return DebitCard.objects.filter(account__user=user)
+        return DebitCard.objects.user_cards(user)
 
     def get_serializer_class(self):
         method = self.request.method

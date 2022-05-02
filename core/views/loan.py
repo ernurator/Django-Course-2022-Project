@@ -13,7 +13,7 @@ class LoanViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Loan.objects.filter(user=user)
+        return Loan.objects.user_loans(user)
 
     def get_serializer_class(self):
         method = self.request.method
