@@ -1,6 +1,6 @@
 import re
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.core import exceptions
 from django.db import models
 
@@ -27,5 +27,6 @@ class User(AbstractUser):
                                     unique=True, blank=False, null=False)
     is_merchant = models.BooleanField(default=False)
 
+    objects = UserManager()
     merchants = MerchantManager()
     customers = CustomerManager()
