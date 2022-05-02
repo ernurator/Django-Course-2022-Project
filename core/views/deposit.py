@@ -1,11 +1,16 @@
-from rest_framework import viewsets
+from django.db import transaction
+
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import api_view
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from core.models import Deposit
-from core.serializers import DepositReadSerializer, DepositUpdateSerializer, DepositWriteSerializer
+from core.models import Deposit, BankAccount
+from core.serializers import DepositReadSerializer, DepositUpdateAmountSerializer, DepositWriteSerializer
 
 
-class DepositViewSet(viewsets.ModelViewSet):
+class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
     permission_classes = [IsAuthenticated]  # TODO: remove after enabling IsAuthenticated in global settings
 
     def perform_create(self, serializer):
@@ -19,7 +24,17 @@ class DepositViewSet(viewsets.ModelViewSet):
         method = self.request.method
         if method in ('GET', 'DELETE'):
             return DepositReadSerializer
-        elif method in ('PUT', 'PATCH'):
-            return DepositUpdateSerializer
-        else:
+        if method in ('POST',):
             return DepositWriteSerializer
+        raise ValueError(f'Unhandled method {method}')
+
+
+@api_view(['POST'])
+def transfer_from_account_to_deposit(request, deposit_pk=None):
+    user = request.user
+    instance = get_object_or_404(Deposit.objects.user_deposits(user), pk=deposit_pk)
+    serializer = DepositUpdateAmountSerializer(instance, data=request.data,
+                                               context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
