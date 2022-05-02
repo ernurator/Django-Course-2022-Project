@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core import exceptions
 from django.db import models
 
-PHONE_NUMBER_LENGTH = 12
+_PHONE_NUMBER_LENGTH = 12
 
 
 def _phone_number_validator(value):
@@ -23,7 +23,7 @@ class CustomerManager(models.Manager):
 
 
 class User(AbstractUser):
-    phone_number = models.CharField(validators=(_phone_number_validator,), max_length=PHONE_NUMBER_LENGTH,
+    phone_number = models.CharField(validators=(_phone_number_validator,), max_length=_PHONE_NUMBER_LENGTH,
                                     unique=True, blank=False, null=False)
     is_merchant = models.BooleanField(default=False)
 
