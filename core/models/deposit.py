@@ -1,9 +1,16 @@
 import uuid
+from datetime import date, timedelta
 
 from django.db import models
 
 from auth_.models import User
 from .currency import CurrencyEnum, CURRENCY_SYMBOL_LENGTH
+
+_DEPOSIT_DEFAULT_DURATION = 365
+
+
+def _get_default_deposit_due_date():
+    return date.today() + timedelta(days=_DEPOSIT_DEFAULT_DURATION)
 
 
 class DepositManager(models.Manager):
@@ -18,7 +25,7 @@ class Deposit(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deposits', related_query_name='deposit')
     balance = models.FloatField(default=0)
     rate = models.FloatField()
-    due_date = models.DateField()
+    due_date = models.DateField(default=_get_default_deposit_due_date)
 
     objects = DepositManager()
 

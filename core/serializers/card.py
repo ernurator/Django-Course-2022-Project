@@ -12,7 +12,7 @@ class DebitCardBaseSerializer(serializers.ModelSerializer):
     def validate_account(self, value):
         user = self.context['request'].user
         if value.user != user:
-            raise serializers.ValidationError(f'Wrong account provided: {value}')
+            raise serializers.ValidationError(f'Wrong account provided: #{value.iban}')
         return value
 
 

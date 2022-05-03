@@ -12,7 +12,7 @@ from .views import (
 urlpatterns = [
     path('accounts/', BankAccountListCreateAPIView.as_view()),
     path('accounts/<str:iban>/', BankAccountRetrieveDestroyAPIView.as_view()),
-    path('deposits/<str:deposit_pk>/transfer_from_account/', transfer_from_account_to_deposit)
+    path('transfers/account_to_deposit/', transfer_from_account_to_deposit)
 ]
 
 router = SimpleRouter()

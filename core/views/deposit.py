@@ -1,13 +1,10 @@
-from django.db import transaction
-
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import api_view
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from core.models import Deposit, BankAccount
-from core.serializers import DepositReadSerializer, DepositUpdateAmountSerializer, DepositWriteSerializer
+from core.models import Deposit
+from core.serializers import DepositReadSerializer, AccountToDepositTransferSerializer, DepositWriteSerializer
 
 
 class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
@@ -30,11 +27,9 @@ class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
 
 
 @api_view(['POST'])
-def transfer_from_account_to_deposit(request, deposit_pk=None):
-    user = request.user
-    instance = get_object_or_404(Deposit.objects.user_deposits(user), pk=deposit_pk)
-    serializer = DepositUpdateAmountSerializer(instance, data=request.data,
-                                               context={'request': request})
+def transfer_from_account_to_deposit(request):
+    serializer = AccountToDepositTransferSerializer(data=request.data,
+                                                    context={'request': request})
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data)
