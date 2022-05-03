@@ -8,6 +8,7 @@ from core.serializers import AccountToDepositTransferSerializer
 #  DepositToAccountTransfer
 #  DepositToCreditTransfer
 #  AccountToAccountTransfer (by iban, phone number)
+#  CardToAccount (card num -> account iban)
 
 
 @api_view(['POST'])
