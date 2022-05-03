@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import Loan
 from core.serializers import LoanReadSerializer, LoanUpdateSerializer, LoanWriteSerializer
 
+# TODO: Charge interests on loan view
+
 
 class LoanViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]  # TODO: remove after enabling IsAuthenticated in global settings

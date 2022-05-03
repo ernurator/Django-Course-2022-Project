@@ -1,10 +1,10 @@
 from rest_framework import viewsets, mixins
-from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 from core.models import Deposit
-from core.serializers import DepositReadSerializer, AccountToDepositTransferSerializer, DepositWriteSerializer
+from core.serializers import DepositReadSerializer, DepositWriteSerializer
+
+# TODO: Add interest on deposit view
 
 
 class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
@@ -24,12 +24,3 @@ class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
         if method in ('POST',):
             return DepositWriteSerializer
         raise ValueError(f'Unhandled method {method}')
-
-
-@api_view(['POST'])
-def transfer_from_account_to_deposit(request):
-    serializer = AccountToDepositTransferSerializer(data=request.data,
-                                                    context={'request': request})
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response(serializer.data)
