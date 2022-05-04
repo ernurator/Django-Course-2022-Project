@@ -3,4 +3,4 @@ from .card import DebitCardCreateSerializer, DebitCardUpdateSerializer, DebitCar
 from .deposit import DepositReadSerializer, DepositCreateSerializer  # noqa
 from .loan import LoanReadSerializer, LoanCreateSerializer  # noqa
 
-from .transfers import AccountToDepositTransferSerializer  # noqa
+from .transfers import AccountToDepositTransferSerializer, AccountToLoanTransferSerializer  # noqa

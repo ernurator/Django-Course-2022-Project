@@ -5,8 +5,10 @@ from rest_framework.routers import SimpleRouter
 from .views import (
     BankAccountListCreateAPIView, BankAccountRetrieveDestroyAPIView,
     DebitCardViewSet,
-    DepositViewSet, transfer_from_account_to_deposit,
-    LoanViewSet
+    DepositViewSet,
+    LoanViewSet,
+    transfer_from_account_to_deposit,
+    TransferViewSet
 )
 
 urlpatterns = [
@@ -19,4 +21,5 @@ router = SimpleRouter()
 router.register(r'cards', DebitCardViewSet, basename='debit-card')
 router.register(r'deposits', DepositViewSet, basename='deposit')
 router.register(r'loans', LoanViewSet, basename='loan')
+router.register(r'transfers', TransferViewSet, basename='transfer')
 urlpatterns.extend(router.urls)

@@ -9,6 +9,9 @@ class LoanManager(models.Manager):
     def user_loans(self, user):
         return self.filter(user=user)
 
+    def get_user_loan(self, user, id_):
+        return self.user_loans(user).filter(id=id_).first()
+
 
 class Loan(models.Model):
     currency = models.CharField(choices=CurrencyEnum.choices, default=CurrencyEnum.KZT,
