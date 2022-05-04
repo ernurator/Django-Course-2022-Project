@@ -6,14 +6,15 @@ from .views import (
     BankAccountListCreateAPIView, BankAccountRetrieveDestroyAPIView,
     DebitCardViewSet,
     DepositViewSet, charge_interest_on_deposit_api_view,
-    LoanViewSet,
+    LoanViewSet, charge_interest_on_loan_api_view,
     TransferViewSet
 )
 
 urlpatterns = [
     path('accounts/', BankAccountListCreateAPIView.as_view()),
     path('accounts/<str:iban>/', BankAccountRetrieveDestroyAPIView.as_view()),
-    path('charge_interests/deposits/<str:iban>/', charge_interest_on_deposit_api_view)
+    path('charge_interests/deposits/<str:iban>/', charge_interest_on_deposit_api_view),
+    path('charge_interests/loans/<int:id_>/', charge_interest_on_loan_api_view)
 ]
 
 router = SimpleRouter()
