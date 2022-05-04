@@ -24,7 +24,7 @@ class DebitCardReadSerializer(DebitCardBaseSerializer):
         depth = 1
 
 
-class DebitCardWriteSerializer(DebitCardBaseSerializer):
+class DebitCardCreateSerializer(DebitCardBaseSerializer):
     class Meta(DebitCardBaseSerializer.Meta):
         fields = '__all__'
 

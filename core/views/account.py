@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from core.serializers import BankAccountReadSerializer, BankAccountWriteSerializer
+from core.serializers import BankAccountReadSerializer, BankAccountCreateSerializer
 from core.models import BankAccount
 
 
@@ -23,7 +23,7 @@ class BankAccountListCreateAPIView(BankAccountBaseAPIView, generics.ListCreateAP
         if method == 'GET':
             return BankAccountReadSerializer
         else:
-            return BankAccountWriteSerializer
+            return BankAccountCreateSerializer
 
 
 class BankAccountRetrieveDestroyAPIView(BankAccountBaseAPIView, generics.RetrieveDestroyAPIView):

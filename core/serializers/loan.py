@@ -13,7 +13,7 @@ class LoanReadSerializer(LoanBaseSerializer):
         exclude = ['user']
 
 
-class LoanWriteSerializer(LoanBaseSerializer):
+class LoanCreateSerializer(LoanBaseSerializer):
     class Meta(LoanBaseSerializer.Meta):
         fields = '__all__'
         read_only_fields = ['user']

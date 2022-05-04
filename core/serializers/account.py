@@ -13,7 +13,7 @@ class BankAccountReadSerializer(BankAccountBaseSerializer):
         exclude = ['user']
 
 
-class BankAccountWriteSerializer(BankAccountBaseSerializer):
+class BankAccountCreateSerializer(BankAccountBaseSerializer):
     class Meta(BankAccountBaseSerializer.Meta):
         fields = '__all__'
         read_only_fields = ['user']

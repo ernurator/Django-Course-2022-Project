@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import DebitCard
-from core.serializers import DebitCardReadSerializer, DebitCardUpdateSerializer, DebitCardWriteSerializer
+from core.serializers import DebitCardReadSerializer, DebitCardUpdateSerializer, DebitCardCreateSerializer
 
 
 class DebitCardViewSet(viewsets.ModelViewSet):
@@ -19,4 +19,4 @@ class DebitCardViewSet(viewsets.ModelViewSet):
         elif method in ('PUT', 'PATCH'):
             return DebitCardUpdateSerializer
         else:
-            return DebitCardWriteSerializer
+            return DebitCardCreateSerializer

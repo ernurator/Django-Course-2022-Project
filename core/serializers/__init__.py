@@ -1,6 +1,6 @@
-from .account import BankAccountReadSerializer, BankAccountWriteSerializer  # noqa
-from .card import DebitCardWriteSerializer, DebitCardUpdateSerializer, DebitCardReadSerializer  # noqa
-from .deposit import DepositReadSerializer, DepositWriteSerializer  # noqa
-from .loan import LoanReadSerializer, LoanWriteSerializer, LoanUpdateSerializer  # noqa
+from .account import BankAccountReadSerializer, BankAccountCreateSerializer  # noqa
+from .card import DebitCardCreateSerializer, DebitCardUpdateSerializer, DebitCardReadSerializer  # noqa
+from .deposit import DepositReadSerializer, DepositCreateSerializer  # noqa
+from .loan import LoanReadSerializer, LoanCreateSerializer, LoanUpdateSerializer  # noqa
 
 from .transfers import AccountToDepositTransferSerializer  # noqa

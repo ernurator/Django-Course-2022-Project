@@ -2,9 +2,9 @@ from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Deposit
-from core.serializers import DepositReadSerializer, DepositWriteSerializer
+from core.serializers import DepositReadSerializer, DepositCreateSerializer
 
-# TODO: Add interest on deposit view
+# TODO: Create view adding interest on deposit
 
 
 class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
@@ -19,8 +19,8 @@ class DepositViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
 
     def get_serializer_class(self):
         method = self.request.method
-        if method in ('GET', 'DELETE'):
+        if method in ('GET',):
             return DepositReadSerializer
         if method in ('POST',):
-            return DepositWriteSerializer
+            return DepositCreateSerializer
         raise ValueError(f'Unhandled method {method}')

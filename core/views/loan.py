@@ -2,9 +2,9 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Loan
-from core.serializers import LoanReadSerializer, LoanUpdateSerializer, LoanWriteSerializer
+from core.serializers import LoanReadSerializer, LoanUpdateSerializer, LoanCreateSerializer
 
-# TODO: Charge interests on loan view
+# TODO: Create view charging interests on loan
 
 
 class LoanViewSet(viewsets.ModelViewSet):
@@ -24,4 +24,4 @@ class LoanViewSet(viewsets.ModelViewSet):
         elif method in ('PUT', 'PATCH'):
             return LoanUpdateSerializer
         else:
-            return LoanWriteSerializer
+            return LoanCreateSerializer
