@@ -1,10 +1,27 @@
 # E.Bank - banking system backend
 
+![Some E-Banking logo from the Internet](https://www.absradiotv.com/wp-content/uploads/2019/02/e-banking.jpg)
+
 Written on Python, created using `django`, `djangorestframework` and `djangorestframework-jwt`. 
 
 Available functionality:
 
-- **TODO: add**
+- Create user account (as a customer, or as a merchant)
+- Upload document photo
+- Open bank account
+- Open debit card
+- Open deposit account
+- Take loan
+- Make payments by loan (from bank account or deposit)
+- Different types of money transfers:
+  - Account -> account
+  - Account -> deposit
+  - Deposit -> account
+  - Card -> account
+- Some basic CRUD operations with accounts, deposits, cards, loans
+- For admins (superusers):
+  - Charge interests on deposit (once a day)
+  - Charge interests on loan (once a day)
 
 Here (**TODO: add link**) you can find structured package for Postman with requests to all existing API endpoints.
 
