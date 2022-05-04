@@ -6,5 +6,5 @@ from .loan import LoanReadSerializer, LoanCreateSerializer  # noqa
 from .transfers import (
     AccountToDepositTransferSerializer, AccountToLoanTransferSerializer,
     DepositToAccountTransferSerializer, DepositToLoanTransferSerializer,
-    AccountToAccountTransferSerializer
+    AccountToAccountTransferSerializer, CardToAccountTransferSerializer
 )

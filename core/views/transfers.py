@@ -5,11 +5,8 @@ from rest_framework.response import Response
 from core.serializers import (
     AccountToDepositTransferSerializer, AccountToLoanTransferSerializer,
     DepositToAccountTransferSerializer, DepositToLoanTransferSerializer,
-    AccountToAccountTransferSerializer
+    AccountToAccountTransferSerializer, CardToAccountTransferSerializer
 )
-
-# TODO:
-#  CardToAccount (card num -> account iban)
 
 
 class TransferViewSet(viewsets.ViewSet):
@@ -49,6 +46,14 @@ class TransferViewSet(viewsets.ViewSet):
     def from_account_to_account(self, request):
         serializer = AccountToAccountTransferSerializer(data=request.data,
                                                         context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'], url_path='card_to_account')
+    def from_card_to_account(self, request):
+        serializer = CardToAccountTransferSerializer(data=request.data,
+                                                     context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)

@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator
 
 from rest_framework import serializers
 
-from core.models import BankAccount, Deposit, Loan
+from core.models import BankAccount, Deposit, Loan, DebitCard
 
 
 class TransferBaseSerializer(serializers.Serializer):
@@ -176,6 +176,40 @@ class AccountToAccountTransferSerializer(TransferBaseSerializer):
     def save(self, **kwargs):
         amount = self.validated_data['amount']
         sender_account = self._get_account(self.validated_data['sender_account_iban'])
+        receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
+        with transaction.atomic():
+            sender_account.balance -= amount
+            receiver_account.balance += amount
+            sender_account.save()
+            receiver_account.save()
+
+
+class CardToAccountTransferSerializer(TransferBaseSerializer):
+    debit_card_number = serializers.CharField()
+    account_iban = serializers.UUIDField()
+    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
+
+    def _get_debit_card(self, card_number):
+        return DebitCard.objects.user_cards(self._get_user_from_context()).filter(card_number=card_number).first()
+
+    def validate_debit_card_number(self, value):
+        if not self._get_debit_card(value):
+            raise serializers.ValidationError(f'Wrong card number provided: #{value}')
+        return value
+
+    def validate(self, attrs):
+        amount = attrs['amount']
+        sender_account = self._get_debit_card(attrs['debit_card_number']).account
+        receiver_account = self._get_account(attrs['account_iban'])
+        if sender_account.currency != receiver_account.currency:
+            raise serializers.ValidationError('Currencies of the accounts do not match')
+        if sender_account.balance < amount:
+            raise serializers.ValidationError('Not enough balance on the account')
+        return attrs
+
+    def save(self, **kwargs):
+        amount = self.validated_data['amount']
+        sender_account = self._get_debit_card(self.validated_data['debit_card_number']).account
         receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
         with transaction.atomic():
             sender_account.balance -= amount
