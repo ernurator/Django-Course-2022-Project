@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User, UserDocuments
 
 
 class UserBaseSerializer(serializers.ModelSerializer):
@@ -23,3 +23,19 @@ class UserCreateSerializer(UserBaseSerializer):
         instance.set_password(validated_data['password'])
         instance.save()
         return instance
+
+
+class UserDocumentsBaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDocuments
+
+
+class UserDocumentsReadSerializer(UserDocumentsBaseSerializer):
+    class Meta(UserDocumentsBaseSerializer.Meta):
+        exclude = ['user']
+
+
+class UserDocumentsCreateSerializer(UserDocumentsBaseSerializer):
+    # TODO: add validation that there is no user documents for the user
+    class Meta(UserDocumentsBaseSerializer.Meta):
+        fields = ['passport_image']

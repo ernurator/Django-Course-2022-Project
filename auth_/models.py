@@ -30,3 +30,11 @@ class User(AbstractUser):
     objects = UserManager()
     merchants = MerchantManager()
     customers = CustomerManager()
+
+
+class UserDocuments(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='documents')
+    passport_image = models.ImageField()
+
+    def __str__(self):
+        return f'User documents of {self.user}'
