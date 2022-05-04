@@ -139,6 +139,25 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = './media/'
 MEDIA_URL = '/media/'
 
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    # TODO: add formatter
+    'loggers': {
+        'core': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
+    },
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
