@@ -10,6 +10,9 @@ class BankAccountManager(models.Manager):
     def user_accounts(self, user):
         return self.filter(user=user)
 
+    def get_user_account(self, user, iban):
+        return self.user_accounts(user).filter(iban=iban).first()
+
 
 class BankAccount(models.Model):
     iban = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

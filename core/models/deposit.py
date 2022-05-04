@@ -17,6 +17,9 @@ class DepositManager(models.Manager):
     def user_deposits(self, user):
         return self.filter(user=user)
 
+    def get_user_deposit(self, user, iban):
+        return self.user_accounts(user).filter(iban=iban).first()
+
 
 class Deposit(models.Model):
     iban = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

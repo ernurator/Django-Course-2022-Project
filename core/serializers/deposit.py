@@ -16,4 +16,4 @@ class DepositReadSerializer(DepositBaseSerializer):
 class DepositCreateSerializer(DepositBaseSerializer):
     class Meta(DepositBaseSerializer.Meta):
         fields = ['currency', 'user', 'balance', 'due_date', 'rate']
-        read_only_fields = ['user', 'balance', 'due_date', 'rate']
+        read_only_fields = ['user', 'balance', 'due_date']

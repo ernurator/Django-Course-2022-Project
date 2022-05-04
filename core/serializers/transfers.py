@@ -14,10 +14,10 @@ class AccountToDepositTransferSerializer(serializers.Serializer):
         return self.context['request'].user
 
     def _get_deposit(self, iban):
-        return Deposit.objects.user_deposits(self._get_user_from_context()).filter(iban=iban).first()
+        return Deposit.objects.get_user_deposit(user=self._get_user_from_context(), iban=iban)
 
     def _get_account(self, iban):
-        return BankAccount.objects.user_accounts(self._get_user_from_context()).filter(iban=iban).first()
+        return BankAccount.objects.get_user_account(user=self._get_user_from_context(), iban=iban)
 
     def validate_deposit_iban(self, value):
         if not self._get_deposit(value):

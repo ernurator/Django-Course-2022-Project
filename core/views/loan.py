@@ -1,13 +1,13 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Loan
-from core.serializers import LoanReadSerializer, LoanUpdateSerializer, LoanCreateSerializer
+from core.serializers import LoanReadSerializer, LoanCreateSerializer
 
 # TODO: Create view charging interests on loan
 
 
-class LoanViewSet(viewsets.ModelViewSet):
+class LoanViewSet(viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin):
     permission_classes = [IsAuthenticated]  # TODO: remove after enabling IsAuthenticated in global settings
 
     def perform_create(self, serializer):
@@ -19,9 +19,8 @@ class LoanViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         method = self.request.method
-        if method in ('GET', 'DELETE'):
+        if method in ('GET',):
             return LoanReadSerializer
-        elif method in ('PUT', 'PATCH'):
-            return LoanUpdateSerializer
-        else:
+        if method in ('POST',):
             return LoanCreateSerializer
+        raise ValueError(f'Unhandled method {method}')
