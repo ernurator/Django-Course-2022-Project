@@ -5,7 +5,7 @@ from rest_framework.routers import SimpleRouter
 from .views import (
     BankAccountListCreateAPIView, BankAccountRetrieveDestroyAPIView,
     DebitCardViewSet,
-    DepositViewSet,
+    DepositViewSet, charge_interest_on_deposit_api_view,
     LoanViewSet,
     TransferViewSet
 )
@@ -13,6 +13,7 @@ from .views import (
 urlpatterns = [
     path('accounts/', BankAccountListCreateAPIView.as_view()),
     path('accounts/<str:iban>/', BankAccountRetrieveDestroyAPIView.as_view()),
+    path('charge_interests/deposits/<str:iban>/', charge_interest_on_deposit_api_view)
 ]
 
 router = SimpleRouter()
