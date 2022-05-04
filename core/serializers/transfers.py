@@ -6,19 +6,30 @@ from rest_framework import serializers
 from core.models import BankAccount, Deposit, Loan
 
 
-class AccountToDepositTransferSerializer(serializers.Serializer):
-    deposit_iban = serializers.UUIDField()
-    account_iban = serializers.UUIDField()
-    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
-
+class TransferBaseSerializer(serializers.Serializer):
     def _get_user_from_context(self):
         return self.context['request'].user
+
+    def _get_account(self, iban):
+        return BankAccount.objects.get_user_account(user=self._get_user_from_context(), iban=iban)
 
     def _get_deposit(self, iban):
         return Deposit.objects.get_user_deposit(user=self._get_user_from_context(), iban=iban)
 
-    def _get_account(self, iban):
-        return BankAccount.objects.get_user_account(user=self._get_user_from_context(), iban=iban)
+    def _get_loan(self, id_):
+        return Loan.objects.get_user_loan(user=self._get_user_from_context(), id_=id_)
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+
+class AccountToDepositTransferSerializer(TransferBaseSerializer):
+    deposit_iban = serializers.UUIDField()
+    account_iban = serializers.UUIDField()
+    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
 
     def validate_deposit_iban(self, value):
         if not self._get_deposit(value):
@@ -50,26 +61,11 @@ class AccountToDepositTransferSerializer(serializers.Serializer):
             account.save()
             deposit.save()
 
-    def update(self, instance, validated_data):
-        pass
 
-    def create(self, validated_data):
-        pass
-
-
-class AccountToLoanTransferSerializer(serializers.Serializer):
+class AccountToLoanTransferSerializer(TransferBaseSerializer):
     loan_id = serializers.IntegerField()
     account_iban = serializers.UUIDField()
     amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
-
-    def _get_user_from_context(self):
-        return self.context['request'].user
-
-    def _get_loan(self, id_):
-        return Loan.objects.get_user_loan(user=self._get_user_from_context(), id_=id_)
-
-    def _get_account(self, iban):
-        return BankAccount.objects.get_user_account(user=self._get_user_from_context(), iban=iban)
 
     def validate_loan_id(self, value):
         if not self._get_loan(value):
@@ -102,9 +98,3 @@ class AccountToLoanTransferSerializer(serializers.Serializer):
             loan.balance -= amount
             account.save()
             loan.save()
-
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
