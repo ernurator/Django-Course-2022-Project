@@ -1,8 +1,12 @@
+import logging
+
 from django.db import transaction
 
 from rest_framework import serializers
 
 from core.models import Loan, BankAccount
+
+logger = logging.getLogger(__name__)
 
 
 class LoanBaseSerializer(serializers.ModelSerializer):
@@ -41,8 +45,16 @@ class LoanCreateSerializer(LoanBaseSerializer):
     def create(self, validated_data):
         account_iban = validated_data.pop('account_iban')
         with transaction.atomic():
-            instance = super().create(validated_data)
-            account = self._get_account(account_iban)
-            account.balance += instance.balance
-            account.save()
+            try:
+                logger.debug(
+                    f"Creating loan [{validated_data['balance']} {validated_data['currency']}], "
+                    "transferring money to account #{account_iban}"
+                )
+                instance = super().create(validated_data)
+                account = self._get_account(account_iban)
+                account.balance += instance.balance
+                account.save()
+            except Exception as e:
+                logger.error(f'Creating loan failed with following exception: {e}')
+                raise
         return instance

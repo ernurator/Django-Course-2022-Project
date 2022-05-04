@@ -1,9 +1,13 @@
+import logging
+
 from django.db import transaction
 from django.core.validators import MinValueValidator
 
 from rest_framework import serializers
 
 from core.models import BankAccount, Deposit, Loan, DebitCard
+
+logger = logging.getLogger(__name__)
 
 
 class TransferBaseSerializer(serializers.Serializer):
@@ -64,10 +68,15 @@ class AccountToDepositTransferSerializer(TransferBaseSerializer):
         account = self._get_account(self.validated_data['account_iban'])
         deposit = self._get_deposit(self.validated_data['deposit_iban'])
         with transaction.atomic():
-            account.balance -= amount
-            deposit.balance += amount
-            account.save()
-            deposit.save()
+            try:
+                logger.debug(f'Starting transfer from {account} to {deposit}')
+                account.balance -= amount
+                deposit.balance += amount
+                account.save()
+                deposit.save()
+            except Exception as e:
+                logger.error(f'Transfer from {account} to {deposit} failed with following exception: {e}')
+                raise
 
 
 class AccountToLoanTransferSerializer(TransferBaseSerializer):
@@ -92,10 +101,15 @@ class AccountToLoanTransferSerializer(TransferBaseSerializer):
         account = self._get_account(self.validated_data['account_iban'])
         loan = self._get_loan(self.validated_data['loan_id'])
         with transaction.atomic():
-            account.balance -= amount
-            loan.balance -= amount
-            account.save()
-            loan.save()
+            try:
+                logger.debug(f'Starting transfer from {account} to {loan}')
+                account.balance -= amount
+                loan.balance -= amount
+                account.save()
+                loan.save()
+            except Exception as e:
+                logger.error(f'Transfer from {account} to {loan} failed with following exception: {e}')
+                raise
 
 
 class DepositToAccountTransferSerializer(TransferBaseSerializer):
@@ -118,10 +132,15 @@ class DepositToAccountTransferSerializer(TransferBaseSerializer):
         account = self._get_account(self.validated_data['account_iban'])
         deposit = self._get_deposit(self.validated_data['deposit_iban'])
         with transaction.atomic():
-            account.balance += amount
-            deposit.balance -= amount
-            account.save()
-            deposit.save()
+            try:
+                logger.debug(f'Starting transfer from {deposit} to {account}')
+                account.balance += amount
+                deposit.balance -= amount
+                account.save()
+                deposit.save()
+            except Exception as e:
+                logger.error(f'Transfer from {deposit} to {account} failed with following exception: {e}')
+                raise
 
 
 class DepositToLoanTransferSerializer(TransferBaseSerializer):
@@ -146,10 +165,15 @@ class DepositToLoanTransferSerializer(TransferBaseSerializer):
         deposit = self._get_deposit(self.validated_data['deposit_iban'])
         loan = self._get_loan(self.validated_data['loan_id'])
         with transaction.atomic():
-            deposit.balance -= amount
-            loan.balance -= amount
-            deposit.save()
-            loan.save()
+            try:
+                logger.debug(f'Starting transfer from {deposit} to {loan}')
+                deposit.balance -= amount
+                loan.balance -= amount
+                deposit.save()
+                loan.save()
+            except Exception as e:
+                logger.error(f'Transfer from {deposit} to {loan} failed with following exception: {e}')
+                raise
 
 
 class AccountToAccountTransferSerializer(TransferBaseSerializer):
@@ -178,10 +202,17 @@ class AccountToAccountTransferSerializer(TransferBaseSerializer):
         sender_account = self._get_account(self.validated_data['sender_account_iban'])
         receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
         with transaction.atomic():
-            sender_account.balance -= amount
-            receiver_account.balance += amount
-            sender_account.save()
-            receiver_account.save()
+            try:
+                logger.debug(f'Starting transfer from {sender_account} to {receiver_account}')
+                sender_account.balance -= amount
+                receiver_account.balance += amount
+                sender_account.save()
+                receiver_account.save()
+            except Exception as e:
+                logger.error(
+                    f'Transfer from {sender_account} to {receiver_account} failed with following exception: {e}'
+                )
+                raise
 
 
 class CardToAccountTransferSerializer(TransferBaseSerializer):
@@ -212,7 +243,14 @@ class CardToAccountTransferSerializer(TransferBaseSerializer):
         sender_account = self._get_debit_card(self.validated_data['debit_card_number']).account
         receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
         with transaction.atomic():
-            sender_account.balance -= amount
-            receiver_account.balance += amount
-            sender_account.save()
-            receiver_account.save()
+            try:
+                logger.debug(f'Starting transfer from {sender_account} to {receiver_account}')
+                sender_account.balance -= amount
+                receiver_account.balance += amount
+                sender_account.save()
+                receiver_account.save()
+            except Exception as e:
+                logger.error(
+                    f'Transfer from {sender_account} to {receiver_account} failed with following exception: {e}'
+                )
+                raise

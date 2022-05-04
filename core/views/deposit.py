@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import api_view, throttle_classes, permission_classes
 from rest_framework.response import Response
@@ -9,6 +11,8 @@ from core.serializers import DepositReadSerializer, DepositCreateSerializer
 from core.permissions import IsSuperuser
 from core.throttles import OncePerDayUserThrottle
 
+logger = logging.getLogger(__name__)
+
 
 @api_view(['POST'])
 @throttle_classes([OncePerDayUserThrottle])
@@ -17,6 +21,7 @@ def charge_interest_on_deposit_api_view(request, iban=None):
     deposit = Deposit.objects.get_user_deposit(request.user, iban=iban)
     if not deposit:
         return Response({'message': f'Deposit #{iban} not found'}, status=HTTP_400_BAD_REQUEST)
+    logger.debug(f'Charging interest on deposit {deposit}')
     deposit.balance = (1 + deposit.rate / 100 / 365) * deposit.balance
     deposit.save()
     return Response({'message': f'Balance of deposit #{iban} updated!'})
