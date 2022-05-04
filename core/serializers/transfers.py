@@ -122,3 +122,63 @@ class DepositToAccountTransferSerializer(TransferBaseSerializer):
             deposit.balance -= amount
             account.save()
             deposit.save()
+
+
+class DepositToLoanTransferSerializer(TransferBaseSerializer):
+    loan_id = serializers.IntegerField()
+    deposit_iban = serializers.UUIDField()
+    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
+
+    def validate(self, attrs):
+        amount = attrs['amount']
+        deposit = self._get_deposit(attrs['deposit_iban'])
+        loan = self._get_loan(attrs['loan_id'])
+        if deposit.currency != loan.currency:
+            raise serializers.ValidationError('Currencies of the deposit and the loan do not match')
+        if deposit.balance < amount:
+            raise serializers.ValidationError('Not enough balance on the deposit')
+        if loan.balance < amount:
+            raise serializers.ValidationError('Too high transfer amount, loan will be over-payed')
+        return attrs
+
+    def save(self, **kwargs):
+        amount = self.validated_data['amount']
+        deposit = self._get_deposit(self.validated_data['deposit_iban'])
+        loan = self._get_loan(self.validated_data['loan_id'])
+        with transaction.atomic():
+            deposit.balance -= amount
+            loan.balance -= amount
+            deposit.save()
+            loan.save()
+
+
+class AccountToAccountTransferSerializer(TransferBaseSerializer):
+    sender_account_iban = serializers.UUIDField()
+    receiver_account_iban = serializers.UUIDField()
+    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
+
+    def validate_sender_account_iban(self, value):
+        return self.validate_account_iban(value)
+
+    def validate_receiver_account_iban(self, value):
+        return self.validate_account_iban(value)
+
+    def validate(self, attrs):
+        amount = attrs['amount']
+        sender_account = self._get_account(attrs['sender_account_iban'])
+        receiver_account = self._get_account(attrs['receiver_account_iban'])
+        if sender_account.currency != receiver_account.currency:
+            raise serializers.ValidationError('Currencies of the accounts do not match')
+        if sender_account.balance < amount:
+            raise serializers.ValidationError('Not enough balance on the account')
+        return attrs
+
+    def save(self, **kwargs):
+        amount = self.validated_data['amount']
+        sender_account = self._get_account(self.validated_data['sender_account_iban'])
+        receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
+        with transaction.atomic():
+            sender_account.balance -= amount
+            receiver_account.balance += amount
+            sender_account.save()
+            receiver_account.save()
