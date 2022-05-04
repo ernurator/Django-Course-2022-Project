@@ -7,14 +7,12 @@ from .views import (
     DebitCardViewSet,
     DepositViewSet,
     LoanViewSet,
-    transfer_from_account_to_deposit,
     TransferViewSet
 )
 
 urlpatterns = [
     path('accounts/', BankAccountListCreateAPIView.as_view()),
     path('accounts/<str:iban>/', BankAccountRetrieveDestroyAPIView.as_view()),
-    path('transfers/account_to_deposit/', transfer_from_account_to_deposit)
 ]
 
 router = SimpleRouter()

@@ -18,7 +18,7 @@ class DepositManager(models.Manager):
         return self.filter(user=user)
 
     def get_user_deposit(self, user, iban):
-        return self.user_accounts(user).filter(iban=iban).first()
+        return self.user_deposits(user).filter(iban=iban).first()
 
 
 class Deposit(models.Model):

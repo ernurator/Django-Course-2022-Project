@@ -19,18 +19,6 @@ class TransferBaseSerializer(serializers.Serializer):
     def _get_loan(self, id_):
         return Loan.objects.get_user_loan(user=self._get_user_from_context(), id_=id_)
 
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
-
-
-class AccountToDepositTransferSerializer(TransferBaseSerializer):
-    deposit_iban = serializers.UUIDField()
-    account_iban = serializers.UUIDField()
-    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
-
     def validate_deposit_iban(self, value):
         if not self._get_deposit(value):
             raise serializers.ValidationError(f'Wrong deposit provided: #{value}')
@@ -40,6 +28,26 @@ class AccountToDepositTransferSerializer(TransferBaseSerializer):
         if not self._get_account(value):
             raise serializers.ValidationError(f'Wrong account provided: #{value}')
         return value
+
+    def validate_loan_id(self, value):
+        if not self._get_loan(value):
+            raise serializers.ValidationError(f'Wrong loan id provided: #{value}')
+        return value
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+    def save(self, **kwargs):
+        raise NotImplementedError
+
+
+class AccountToDepositTransferSerializer(TransferBaseSerializer):
+    deposit_iban = serializers.UUIDField()
+    account_iban = serializers.UUIDField()
+    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
 
     def validate(self, attrs):
         amount = attrs['amount']
@@ -67,16 +75,6 @@ class AccountToLoanTransferSerializer(TransferBaseSerializer):
     account_iban = serializers.UUIDField()
     amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
 
-    def validate_loan_id(self, value):
-        if not self._get_loan(value):
-            raise serializers.ValidationError(f'Wrong loan id provided: #{value}')
-        return value
-
-    def validate_account_iban(self, value):
-        if not self._get_account(value):
-            raise serializers.ValidationError(f'Wrong account provided: #{value}')
-        return value
-
     def validate(self, attrs):
         amount = attrs['amount']
         account = self._get_account(attrs['account_iban'])
@@ -98,3 +96,29 @@ class AccountToLoanTransferSerializer(TransferBaseSerializer):
             loan.balance -= amount
             account.save()
             loan.save()
+
+
+class DepositToAccountTransferSerializer(TransferBaseSerializer):
+    deposit_iban = serializers.UUIDField()
+    account_iban = serializers.UUIDField()
+    amount = serializers.IntegerField(validators=[MinValueValidator(0.0)])
+
+    def validate(self, attrs):
+        amount = attrs['amount']
+        account = self._get_account(attrs['account_iban'])
+        deposit = self._get_deposit(attrs['deposit_iban'])
+        if account.currency != deposit.currency:
+            raise serializers.ValidationError('Currencies of the account and the deposit do not match')
+        if deposit.balance < amount:
+            raise serializers.ValidationError('Not enough balance on the account')
+        return attrs
+
+    def save(self, **kwargs):
+        amount = self.validated_data['amount']
+        account = self._get_account(self.validated_data['account_iban'])
+        deposit = self._get_deposit(self.validated_data['deposit_iban'])
+        with transaction.atomic():
+            account.balance += amount
+            deposit.balance -= amount
+            account.save()
+            deposit.save()
