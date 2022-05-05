@@ -124,7 +124,7 @@ class DepositToAccountTransferSerializer(TransferBaseSerializer):
         if account.currency != deposit.currency:
             raise serializers.ValidationError('Currencies of the account and the deposit do not match')
         if deposit.balance < amount:
-            raise serializers.ValidationError('Not enough balance on the account')
+            raise serializers.ValidationError('Not enough balance on the deposit')
         return attrs
 
     def save(self, **kwargs):
@@ -184,13 +184,15 @@ class AccountToAccountTransferSerializer(TransferBaseSerializer):
     def validate_sender_account_iban(self, value):
         return self.validate_account_iban(value)
 
-    def validate_receiver_account_iban(self, value):
-        return self.validate_account_iban(value)
+    def validate_receiver_account_iban(self, value):  # noqa
+        if not BankAccount.objects.filter(iban=value).first():
+            raise serializers.ValidationError(f'Wrong account provided: #{value}')
+        return value
 
     def validate(self, attrs):
         amount = attrs['amount']
         sender_account = self._get_account(attrs['sender_account_iban'])
-        receiver_account = self._get_account(attrs['receiver_account_iban'])
+        receiver_account = BankAccount.objects.filter(iban=attrs['receiver_account_iban']).first()
         if sender_account.currency != receiver_account.currency:
             raise serializers.ValidationError('Currencies of the accounts do not match')
         if sender_account.balance < amount:
@@ -200,7 +202,7 @@ class AccountToAccountTransferSerializer(TransferBaseSerializer):
     def save(self, **kwargs):
         amount = self.validated_data['amount']
         sender_account = self._get_account(self.validated_data['sender_account_iban'])
-        receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
+        receiver_account = BankAccount.objects.filter(iban=self.validated_data['receiver_account_iban']).first()
         with transaction.atomic():
             try:
                 logger.debug(f'Starting transfer from {sender_account} to {receiver_account}')
@@ -228,10 +230,15 @@ class CardToAccountTransferSerializer(TransferBaseSerializer):
             raise serializers.ValidationError(f'Wrong card number provided: #{value}')
         return value
 
+    def validate_account_iban(self, value):  # noqa
+        if not BankAccount.objects.filter(iban=value).first():
+            raise serializers.ValidationError(f'Wrong account provided: #{value}')
+        return value
+
     def validate(self, attrs):
         amount = attrs['amount']
         sender_account = self._get_debit_card(attrs['debit_card_number']).account
-        receiver_account = self._get_account(attrs['account_iban'])
+        receiver_account = BankAccount.objects.filter(iban=attrs['account_iban']).first()
         if sender_account.currency != receiver_account.currency:
             raise serializers.ValidationError('Currencies of the accounts do not match')
         if sender_account.balance < amount:
@@ -241,7 +248,7 @@ class CardToAccountTransferSerializer(TransferBaseSerializer):
     def save(self, **kwargs):
         amount = self.validated_data['amount']
         sender_account = self._get_debit_card(self.validated_data['debit_card_number']).account
-        receiver_account = self._get_account(self.validated_data['receiver_account_iban'])
+        receiver_account = BankAccount.objects.filter(iban=self.validated_data['account_iban']).first()
         with transaction.atomic():
             try:
                 logger.debug(f'Starting transfer from {sender_account} to {receiver_account}')
