@@ -6,7 +6,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from .views import UserAPIView, UserDocumentsAPIView
 
 urlpatterns = [
-    path('login/', obtain_jwt_token),
+    path('api-token-auth/', obtain_jwt_token),
     path('users/', UserAPIView.as_view()),
 ]
 
