@@ -23,7 +23,7 @@ Available functionality:
   - Charge interests on deposit (once a day)
   - Charge interests on loan (once a day)
 
-Here (**TODO: add link**) you can find structured package for Postman with requests to all existing API endpoints.
+[Here](./BF%20Django%20Project%20%5BSpring%202022%5D.postman_collection.json) you can find structured package for Postman with requests to all existing API endpoints.
 
 ## How to run locally
 
