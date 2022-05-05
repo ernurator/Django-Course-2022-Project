@@ -51,6 +51,54 @@
 					"response": []
 				},
 				{
+					"name": "Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable('token', response.token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/api-token-refresh/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"api-token-refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Registration",
 					"request": {
 						"method": "POST",
@@ -369,7 +417,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "Update card",
 					"request": {
 						"method": "PUT",
 						"header": [
