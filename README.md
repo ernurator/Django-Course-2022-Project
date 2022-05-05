@@ -25,6 +25,8 @@ Available functionality:
 
 [Here](./BF%20Django%20Project%20%5BSpring%202022%5D.postman_collection.json) you can find structured package for Postman with requests to all existing API endpoints.
 
+[Here](https://drive.google.com/file/d/1_RCNWqT9a20A1Q-k-2VYP3aaTSAWxehJ/view?usp=sharing) you can find class diagram for the project.
+
 ## How to run locally
 
 ```bash
